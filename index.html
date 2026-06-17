@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- WICHTIG: Funnel-Seite vom Suchindex fernhalten, kein Cross-Discovery zur B2B-Welt -->
+<meta name="robots" content="noindex, nofollow">
+<title>sternenklar — Erkenne dich in den Sternen wieder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#080a1c;
+    --bg-mid:#11143a;
+    --bg-glow:#1d2150;
+    --star:#f3efe2;
+    --text:#ece8da;
+    --text-soft:#b6b8cf;
+    --gold:#e6c069;
+    --gold-soft:#f0d79b;
+    --lilac:#9aa0d6;
+    --card:rgba(20,24,58,0.55);
+    --line:rgba(230,192,105,0.22);
+    --display:"Fraunces", Georgia, serif;
+    --body:"Inter", system-ui, sans-serif;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:var(--body);
+    color:var(--text);
+    background:var(--bg-deep);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  /* Sternenhimmel */
+  #sky{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    display:block;
+    background:
+      radial-gradient(120% 90% at 50% -10%, var(--bg-glow) 0%, var(--bg-mid) 38%, var(--bg-deep) 78%);
+  }
+  .veil{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background:radial-gradient(80% 60% at 50% 40%, transparent 0%, rgba(8,10,28,0.35) 100%);
+  }
+
+  main{position:relative;z-index:2;}
+
+  .wrap{max-width:680px;margin:0 auto;padding:0 24px;}
+
+  /* Hero */
+  .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:80px 0 64px;}
+  .eyebrow{
+    font-size:12px;letter-spacing:0.32em;text-transform:uppercase;
+    color:var(--gold);font-weight:600;margin-bottom:24px;
+  }
+  .eyebrow .dot{opacity:0.6;margin:0 8px;}
+  h1{
+    font-family:var(--display);
+    font-weight:400;
+    font-size:clamp(2.3rem,7.5vw,3.6rem);
+    line-height:1.08;
+    letter-spacing:-0.01em;
+    margin-bottom:22px;
+    color:var(--star);
+  }
+  h1 em{font-style:italic;color:var(--gold-soft);}
+  .sub{font-size:clamp(1rem,2.6vw,1.18rem);color:var(--text-soft);max-width:30em;margin-bottom:36px;}
+
+  /* Formular */
+  .form-card{
+    background:var(--card);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,0.07);
+    border-radius:18px;
+    padding:26px 24px;
+    max-width:440px;
+  }
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:13px;color:var(--text-soft);margin-bottom:7px;letter-spacing:0.01em;}
+  .field input[type="date"],.field input[type="email"]{
+    width:100%;font-family:var(--body);font-size:16px;color:var(--text);
+    background:rgba(8,10,28,0.5);border:1px solid rgba(255,255,255,0.12);
+    border-radius:11px;padding:13px 14px;transition:border-color .2s ease;
+  }
+  .field input::placeholder{color:#6f7290;}
+  .field input:focus{outline:none;border-color:var(--gold);}
+  .consent{display:flex;gap:10px;align-items:flex-start;margin:4px 0 20px;}
+  .consent input{margin-top:3px;width:16px;height:16px;accent-color:var(--gold);flex-shrink:0;}
+  .consent label{font-size:12px;color:var(--text-soft);line-height:1.5;}
+  .consent a{color:var(--gold-soft);}
+  .btn{
+    width:100%;font-family:var(--body);font-size:16px;font-weight:600;letter-spacing:0.01em;
+    color:#1a1405;background:linear-gradient(180deg,var(--gold-soft),var(--gold));
+    border:none;border-radius:11px;padding:15px 20px;cursor:pointer;
+    transition:transform .15s ease, box-shadow .2s ease;
+    box-shadow:0 8px 30px rgba(230,192,105,0.22);
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:0 12px 38px rgba(230,192,105,0.32);}
+  .btn:focus-visible{outline:2px solid var(--star);outline-offset:3px;}
+  .form-error{color:#f0a3a3;font-size:13px;margin-top:12px;display:none;}
+
+  /* Reveal: Mini-Analyse */
+  .reading{
+    margin-top:30px;max-width:440px;
+    opacity:0;transform:translateY(16px);
+    transition:opacity .7s ease, transform .7s ease;
+    display:none;
+  }
+  .reading.show{display:block;opacity:1;transform:none;}
+  .reading-card{
+    background:var(--card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--line);border-radius:18px;padding:28px 26px;
+  }
+  .sign-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+  .glyph{font-family:var(--display);font-size:30px;color:var(--gold);line-height:1;}
+  .sign-name{font-size:12px;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);font-weight:600;}
+  .reading-text{font-family:var(--display);font-size:1.18rem;line-height:1.5;color:var(--star);font-weight:400;}
+  .gap{margin-top:24px;padding-top:22px;border-top:1px solid rgba(255,255,255,0.08);}
+  .gap p{color:var(--text-soft);font-size:0.98rem;margin-bottom:20px;}
+  .gap .btn{background:transparent;color:var(--gold-soft);border:1px solid var(--gold);box-shadow:none;}
+  .gap .btn:hover{background:rgba(230,192,105,0.08);transform:translateY(-1px);}
+
+  /* Angebot */
+  .offer{padding:96px 0;}
+  .offer .eyebrow{margin-bottom:18px;}
+  .offer h2{font-family:var(--display);font-weight:400;font-size:clamp(1.8rem,5vw,2.5rem);line-height:1.14;margin-bottom:18px;color:var(--star);}
+  .offer .lead{color:var(--text-soft);max-width:32em;margin-bottom:40px;}
+  .incl{list-style:none;display:grid;gap:18px;margin-bottom:44px;max-width:520px;}
+  .incl li{display:flex;gap:16px;align-items:flex-start;}
+  .incl .mark{font-family:var(--display);color:var(--gold);font-size:20px;line-height:1.3;flex-shrink:0;}
+  .incl strong{display:block;color:var(--star);font-weight:600;font-size:1.02rem;margin-bottom:2px;}
+  .incl span{color:var(--text-soft);font-size:0.94rem;}
+  .price-row{display:flex;align-items:baseline;gap:12px;margin-bottom:22px;}
+  .price{font-family:var(--display);font-size:2.6rem;color:var(--star);}
+  .price-note{color:var(--text-soft);font-size:0.9rem;}
+  .offer .btn{max-width:440px;}
+  .reassure{color:var(--text-soft);font-size:0.86rem;margin-top:16px;max-width:440px;}
+
+  /* Footer */
+  footer{padding:48px 0 64px;border-top:1px solid rgba(255,255,255,0.07);}
+  footer .wrap{display:flex;flex-direction:column;gap:18px;}
+  .foot-links{display:flex;gap:24px;flex-wrap:wrap;}
+  .foot-links a{color:var(--text-soft);font-size:0.88rem;text-decoration:none;}
+  .foot-links a:hover{color:var(--gold-soft);}
+  .disclaimer{color:#7d7f99;font-size:0.8rem;max-width:46em;line-height:1.6;}
+  .brand-foot{font-family:var(--display);color:var(--star);font-size:1.1rem;letter-spacing:0.02em;}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .reading{transition:none;}
+  }
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="veil"></div>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">sternenklar <span class="dot">✦</span> dein kosmisches Profil</div>
+      <h1>Dein Sternzeichen kennst du.<br>Aber kennst du dein <em>wahres Profil?</em></h1>
+      <p class="sub">Gib dein Geburtsdatum ein und erhalte sofort deine kostenlose Mini-Analyse — in Sekunden, direkt hier.</p>
+
+      <form class="form-card" id="hookForm" novalidate>
+        <div class="field">
+          <label for="bday">Dein Geburtsdatum</label>
+          <input type="date" id="bday" name="bday" required>
+        </div>
+        <div class="field">
+          <label for="email">Deine E-Mail</label>
+          <input type="email" id="email" name="email" placeholder="du@beispiel.de" required>
+        </div>
+        <div class="consent">
+          <input type="checkbox" id="consent" required>
+          <label for="consent">Ich möchte meine Analyse per E-Mail erhalten und bin mit der <a href="/datenschutz" target="_blank">Datenschutzerklärung</a> einverstanden.</label>
+        </div>
+        <button class="btn" type="submit">Meine kostenlose Analyse zeigen</button>
+        <p class="form-error" id="formError">Bitte Geburtsdatum, E-Mail und Häkchen ausfüllen.</p>
+      </form>
+
+      <div class="reading" id="reading" aria-live="polite">
+        <div class="reading-card">
+          <div class="sign-row">
+            <span class="glyph" id="signGlyph">✦</span>
+            <span class="sign-name" id="signName">Dein Zeichen</span>
+          </div>
+          <p class="reading-text" id="signText"></p>
+          <div class="gap">
+            <p>Aber das ist nur die Oberfläche. Dein Sonnenzeichen zeigt, wie du wirkst — wer du wirklich bist, steckt in deinem Aszendenten und deinem Mondzeichen. Dafür brauchen wir deine genaue Geburtszeit und deinen Geburtsort.</p>
+            <a class="btn" href="#angebot">Mein vollständiges Profil ansehen</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="offer" id="angebot">
+    <div class="wrap">
+      <div class="eyebrow">das vollständige profil</div>
+      <h2>Dein Geburtshoroskop, vollständig gedeutet.</h2>
+      <p class="lead">Aus deinem genauen Geburtsmoment erstellen wir dein persönliches Profil — ausführlich, klar formuliert und hochwertig gestaltet. Kein Standardtext, sondern deine Konstellation.</p>
+
+      <ul class="incl">
+        <li><span class="mark">✦</span><div><strong>Wer du bist</strong><span>Persönlichkeit, Stärken und die Seiten, die du selten zeigst.</span></div></li>
+        <li><span class="mark">✦</span><div><strong>Liebe & Beziehungen</strong><span>Wie du bindest, was du brauchst, wo es immer wieder hakt.</span></div></li>
+        <li><span class="mark">✦</span><div><strong>Beruf & Berufung</strong><span>Wo deine Energie hingehört und was dich wirklich antreibt.</span></div></li>
+        <li><span class="mark">✦</span><div><strong>Als gestaltetes PDF</strong><span>Schön zu lesen, direkt per E-Mail — zum Behalten.</span></div></li>
+      </ul>
+
+      <div class="price-row">
+        <span class="price">19&nbsp;€</span>
+        <span class="price-note">einmalig · sofort nach Erstellung per Mail</span>
+      </div>
+      <!-- TODO: href durch deinen Stripe Payment Link ersetzen -->
+      <a class="btn" href="#" id="buyBtn">Jetzt mein vollständiges Profil erstellen</a>
+      <p class="reassure">Im nächsten Schritt gibst du Geburtszeit, Geburtsort und deinen Namen ein.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="brand-foot">sternenklar</div>
+      <div class="foot-links">
+        <a href="/impressum">Impressum</a>
+        <a href="/datenschutz">Datenschutz</a>
+        <a href="/widerruf">Widerruf</a>
+      </div>
+      <p class="disclaimer">sternenklar ist ein Angebot zur Unterhaltung und Selbstreflexion und ersetzt keine professionelle Beratung in Gesundheits-, Finanz- oder Rechtsfragen.</p>
+    </div>
+  </footer>
+</main>
+
+<script>
+/* ---------- Sternzeichen-Deutungen ---------- */
+const SIGNS = [
+  {name:"Steinbock", glyph:"♑", from:[12,22], to:[1,19], text:"Als Steinbock baust du langfristig, während andere noch reden. Disziplin ist für dich kein Zwang, sondern dein Weg, Kontrolle über das Chaos zu behalten. Hinter der Ernsthaftigkeit sitzt jemand, der weit mehr fühlt, als er zeigt. Trifft es ganz gut, oder?"},
+  {name:"Wassermann", glyph:"♒", from:[1,20], to:[2,18], text:"Als Wassermann denkst du quer, wo andere geradeaus gehen. Du brauchst deine Freiheit und deinen eigenen Kopf — und trotzdem liegt dir das große Ganze ehrlich am Herzen. Nähe lässt du zu, aber zu deinen Bedingungen. Klingt vertraut?"},
+  {name:"Fische", glyph:"♓", from:[2,19], to:[3,20], text:"Als Fisch nimmst du die Welt feiner wahr als die meisten — die Grenzen zwischen dir und anderen verschwimmen leicht. Deine Fantasie ist ein Zufluchtsort, dein Mitgefühl manchmal grenzenlos. Hinter dem Träumerischen suchst du etwas, das größer ist als der Alltag. Erkennst du dich darin?"},
+  {name:"Widder", glyph:"♈", from:[3,21], to:[4,19], text:"Als Widder wartest du nicht, du gehst los — oft, bevor andere überhaupt verstanden haben, worum es geht. Dein Mut zieht Menschen an, deine Ungeduld fordert sie. Unter dem Tempo steckt jemand, der nicht stillsitzen kann, solange etwas ungetan ist. Klingt vertraut, oder?"},
+  {name:"Stier", glyph:"♉", from:[4,20], to:[5,20], text:"Als Stier baust du dir eine Welt, in der du dich sicher fühlst — und verteidigst sie mit einer Ruhe, die andere unterschätzen. Du genießt das Schöne ohne schlechtes Gewissen und gibst dein Tempo nur ungern auf. Wer dein Vertrauen hat, hat es für lange. Ziemlich treffend, nicht wahr?"},
+  {name:"Zwillinge", glyph:"♊", from:[5,21], to:[6,20], text:"Als Zwilling denkst du in zwei Richtungen gleichzeitig und langweilst dich schneller, als andere mitkommen. Deine Neugier ist ansteckend, dein Kopf selten still. Hinter der Leichtigkeit suchst du jemanden, der mit deinem Tempo Schritt hält. Erkennst du dich?"},
+  {name:"Krebs", glyph:"♋", from:[6,21], to:[7,22], text:"Als Krebs spürst du Stimmungen, bevor ein Wort fällt — und trägst die der anderen oft mit. Du schützt, was dir wichtig ist, hinter einer Schale, die nicht jeder durchdringt. Wer drin ist, erlebt eine Tiefe, die von außen niemand vermutet. Trifft es, oder?"},
+  {name:"Löwe", glyph:"♌", from:[7,23], to:[8,22], text:"Als Löwe trittst du auf, ohne es zu wollen — Menschen spüren deine Wärme, bevor du ein Wort sagst. Du gibst viel, und manchmal mehr, als zurückkommt. Hinter deiner Selbstsicherheit sitzt ein feines Gespür dafür, gesehen zu werden. Das beschreibt dich vermutlich schon ziemlich gut, oder?"},
+  {name:"Jungfrau", glyph:"♍", from:[8,23], to:[9,22], text:"Als Jungfrau siehst du das Detail, das alle übersehen — und kannst es kaum lassen, es besser zu machen. Dein Anspruch gilt zuerst dir selbst, und das ist anstrengender, als andere ahnen. Hinter der Sachlichkeit steckt ein leises, großes Bedürfnis, wirklich gebraucht zu werden. Klingt nach dir?"},
+  {name:"Waage", glyph:"♎", from:[9,23], to:[10,22], text:"Als Waage spürst du Ungleichgewicht im Raum wie andere einen Luftzug. Du suchst Harmonie, wägst ab, und schwer fällt dir nur eins: die eigene Entscheidung. Hinter deinem Charme sitzt jemand, der es allen recht machen will — und sich dabei leicht selbst vergisst. Erwischt, oder?"},
+  {name:"Skorpion", glyph:"♏", from:[10,23], to:[11,21], text:"Als Skorpion gibt es bei dir kein halb — du fühlst tief, bindest dich tief und vergisst wenig. Menschen spüren deine Intensität, bevor sie sie benennen können. Hinter der Kontrolle liegt eine Verletzlichkeit, die du nur sehr wenigen zeigst. Ziemlich nah dran, nicht?"},
+  {name:"Schütze", glyph:"♐", from:[11,22], to:[12,21], text:"Als Schütze brauchst du Weite — im Kopf, im Kalender, im Leben. Enge macht dich rastlos, neue Horizonte lebendig. Hinter der Freiheitsliebe steckt eine ehrliche Suche nach Sinn, die dich nie ganz loslässt. Erkennst du dich wieder?"}
+];
+
+function signFor(month, day){
+  for(const s of SIGNS){
+    const [fm,fd]=s.from, [tm,td]=s.to;
+    if(fm<=tm){ // innerhalb eines Jahres
+      if((month===fm&&day>=fd)||(month===tm&&day<=td)||(month>fm&&month<tm)) return s;
+    } else { // Jahreswechsel (Steinbock)
+      if((month===fm&&day>=fd)||(month===tm&&day<=td)||month>fm||month<tm) return s;
+    }
+  }
+  return SIGNS[0];
+}
+
+/* ---------- Formular ---------- */
+const form=document.getElementById('hookForm');
+const reading=document.getElementById('reading');
+const errorEl=document.getElementById('formError');
+
+form.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const bday=document.getElementById('bday').value;
+  const email=document.getElementById('email').value.trim();
+  const consent=document.getElementById('consent').checked;
+
+  if(!bday || !email || !consent || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
+    errorEl.style.display='block';
+    return;
+  }
+  errorEl.style.display='none';
+
+  const d=new Date(bday);
+  const s=signFor(d.getMonth()+1, d.getDate());
+  document.getElementById('signGlyph').textContent=s.glyph;
+  document.getElementById('signName').textContent="Sonne im "+s.name;
+  document.getElementById('signText').textContent=s.text;
+
+  reading.classList.add('show');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    reading.scrollIntoView({behavior:'smooth', block:'center'});
+  }));
+
+  /* TODO – E-Mail-Erfassung an deinen Endpoint/Mailer:
+     fetch('DEIN_ENDPOINT', {method:'POST', headers:{'Content-Type':'application/json'},
+       body: JSON.stringify({email, bday, sign: s.name})});
+     (Double-Opt-In im Mailer aktivieren.) */
+});
+
+/* ---------- Sternenhimmel ---------- */
+(function(){
+  const canvas=document.getElementById('sky');
+  const ctx=canvas.getContext('2d');
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w,h,dpr,stars=[],px=0,py=0,tpx=0,tpy=0,t=0;
+
+  function resize(){
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    w=canvas.clientWidth=window.innerWidth;
+    h=canvas.clientHeight=window.innerHeight;
+    canvas.width=w*dpr; canvas.height=h*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    build();
+  }
+  function build(){
+    const count=Math.round(Math.min(w*h/4200, 320));
+    stars=[];
+    for(let i=0;i<count;i++){
+      const depth=Math.random();           // 0 fern … 1 nah
+      stars.push({
+        x:Math.random()*w, y:Math.random()*h,
+        r:0.4+depth*1.7,
+        depth:0.25+depth*1.0,
+        base:0.25+Math.random()*0.6,
+        tw:Math.random()*Math.PI*2,
+        sp:0.6+Math.random()*1.4,
+        gold:Math.random()<0.12
+      });
+    }
+  }
+  function frame(){
+    t+=0.016;
+    px+=(tpx-px)*0.05; py+=(tpy-py)*0.05;
+    ctx.clearRect(0,0,w,h);
+    for(const s of stars){
+      const a=reduce ? s.base : s.base*(0.55+0.45*Math.sin(t*s.sp+s.tw));
+      const ox=px*s.depth*22, oy=py*s.depth*22 + (reduce?0:Math.sin(t*0.06+s.tw)*s.depth*6);
+      ctx.beginPath();
+      ctx.arc(s.x+ox, s.y+oy, s.r, 0, Math.PI*2);
+      ctx.fillStyle = s.gold
+        ? 'rgba(240,215,155,'+a+')'
+        : 'rgba(243,239,226,'+a+')';
+      ctx.fill();
+      if(s.r>1.4){
+        ctx.beginPath();
+        ctx.arc(s.x+ox, s.y+oy, s.r*3.2, 0, Math.PI*2);
+        ctx.fillStyle = s.gold ? 'rgba(230,192,105,'+(a*0.10)+')' : 'rgba(154,160,214,'+(a*0.08)+')';
+        ctx.fill();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  window.addEventListener('pointermove',(e)=>{
+    if(reduce) return;
+    tpx=(e.clientX/w-0.5); tpy=(e.clientY/h-0.5);
+  });
+  window.addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
