@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Widerrufsbelehrung — sternenklar</title>
+<style>
+  @font-face {
+    font-family: 'Fraunces';
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url('fonts/fraunces-normal-latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Fraunces';
+    font-style: italic;
+    font-weight: 500;
+    font-display: swap;
+    src: url('fonts/fraunces-italic-500-latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url('fonts/inter-latin.woff2') format('woff2');
+  }
+  :root{
+    --bg-deep:#080a1c;
+    --star:#f3efe2;
+    --text:#ece8da;
+    --text-soft:#b6b8cf;
+    --gold:#e6c069;
+    --gold-soft:#f0d79b;
+    --line:rgba(230,192,105,0.22);
+    --display:"Fraunces", Georgia, serif;
+    --body:"Inter", system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:var(--body);
+    color:var(--text);
+    background:var(--bg-deep);
+    line-height:1.7;
+  }
+  .wrap{
+    max-width:680px;
+    margin:0 auto;
+    padding:64px 24px 96px;
+  }
+  .back{
+    display:inline-block;
+    margin-bottom:48px;
+    color:var(--text-soft);
+    font-size:0.88rem;
+    text-decoration:none;
+    letter-spacing:0.01em;
+  }
+  .back:hover{color:var(--gold-soft);}
+  .back::before{content:"← ";}
+  h1{
+    font-family:var(--display);
+    font-weight:400;
+    font-size:clamp(1.8rem,5vw,2.4rem);
+    color:var(--star);
+    margin-bottom:40px;
+    line-height:1.2;
+  }
+  h2{
+    font-family:var(--body);
+    font-weight:600;
+    font-size:0.8rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin:40px 0 12px;
+  }
+  p{
+    color:var(--text-soft);
+    margin-bottom:12px;
+  }
+  .formbox{
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:24px 28px;
+    margin-top:8px;
+  }
+  .formbox p{margin-bottom:8px;}
+  a{color:var(--gold-soft);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  hr{border:none;border-top:1px solid var(--line);margin:40px 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="/" class="back">Zurück zur Startseite</a>
+  <h1>Widerrufsbelehrung</h1>
+
+  <h2>Widerrufsrecht</h2>
+  <p>Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen. Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag des Vertragsabschlusses.</p>
+  <p>Um Ihr Widerrufsrecht auszuüben, müssen Sie uns (<a href="mailto:info@sternenklar.org">info@sternenklar.org</a>) mittels einer eindeutigen Erklärung (per E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren. Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung vor Ablauf der Frist absenden.</p>
+
+  <h2>Folgen des Widerrufs</h2>
+  <p>Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle erhaltenen Zahlungen unverzüglich und spätestens binnen vierzehn Tagen ab Eingang Ihrer Widerrufsmitteilung zurückzuzahlen.</p>
+
+  <h2>Vorzeitiges Erlöschen des Widerrufsrechts</h2>
+  <p>Das Widerrufsrecht erlischt bei einem Vertrag über die Lieferung nicht auf einem körperlichen Datenträger befindlicher digitaler Inhalte, wenn wir mit der Ausführung begonnen haben, nachdem Sie ausdrücklich zugestimmt haben, dass wir vor Ablauf der Widerrufsfrist beginnen, und Sie Ihre Kenntnis davon bestätigt haben, dass Sie dadurch Ihr Widerrufsrecht verlieren.</p>
+
+  <hr>
+
+  <h2>Muster-Widerrufsformular</h2>
+  <p>Wenn Sie den Vertrag widerrufen wollen, füllen Sie dieses Formular aus und senden es per E-Mail zurück.</p>
+  <div class="formbox">
+    <p>An: <a href="mailto:info@sternenklar.org">info@sternenklar.org</a></p>
+    <p>Hiermit widerrufe ich den von mir abgeschlossenen Vertrag über die Erstellung eines persönlichen Reports.</p>
+    <p>Bestellt am: …</p>
+    <p>Name: …</p>
+    <p>Anschrift: …</p>
+    <p>Datum: …</p>
+  </div>
+</div>
+</body>
+</html>
