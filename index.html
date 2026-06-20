@@ -226,6 +226,9 @@
   }
   .qz-card:hover{border-color:rgba(230,192,105,0.5);background:rgba(20,24,58,0.75);}
   .qz-card.sel{border-color:var(--gold);background:rgba(230,192,105,0.1);color:var(--star);}
+  @keyframes qzFlash{0%{background:rgba(230,192,105,0.28);border-color:var(--gold);}100%{background:rgba(230,192,105,0.1);border-color:var(--gold);}}
+  .qz-card.flash{animation:qzFlash .32s ease-out forwards;}
+  .qz-nav.no-next .qz-next{display:none;}
   .qz-nav{display:flex;gap:12px;align-items:center;}
   .qz-back{
     background:none;border:1px solid rgba(255,255,255,0.15);
@@ -249,8 +252,24 @@
   .qz-summary{margin-bottom:32px;}
   .qz-summary dt{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:3px;}
   .qz-summary dd{color:var(--text-soft);font-size:0.9rem;margin-bottom:14px;margin-left:0;}
-  .qz-cta-wrap{margin-top:4px;}
-  .qz-cta-wrap .btn{display:block;text-align:center;text-decoration:none;max-width:100%;}
+  .qz-offer-card{
+    background:rgba(20,24,58,0.6);
+    border:1px solid rgba(230,192,105,0.35);
+    border-radius:18px;padding:28px 26px;margin-top:8px;
+  }
+  .qz-offer-eyebrow{
+    font-size:11px;letter-spacing:0.22em;text-transform:uppercase;
+    color:var(--gold);font-weight:600;margin-bottom:14px;
+  }
+  .qz-offer-headline{
+    font-family:var(--display);font-weight:400;
+    font-size:clamp(1.25rem,4vw,1.6rem);
+    color:var(--star);line-height:1.2;margin-bottom:14px;
+  }
+  .qz-offer-text{
+    color:var(--text-soft);font-size:0.96rem;line-height:1.7;margin-bottom:24px;
+  }
+  .qz-offer-card .btn{display:block;text-align:center;text-decoration:none;}
 </style>
 </head>
 <body>
@@ -323,8 +342,8 @@
         <button class="qz-card" data-q="0" data-v="ich">Wer ich wirklich bin</button>
         <button class="qz-card" data-q="0" data-v="entscheidung">Eine große Entscheidung</button>
       </div>
-      <div class="qz-nav">
-        <button class="btn qz-next" id="qzNext0" disabled>Weiter</button>
+      <div class="qz-nav no-next">
+        <!-- kein Weiter-Button: Auto-Advance bei Kartenauswahl -->
       </div>
     </div>
 
@@ -337,9 +356,8 @@
         <button class="qz-card" data-q="1" data-v="kopf">Mein Kopf schaltet nie ab</button>
         <button class="qz-card" data-q="1" data-v="geben">Ich gebe mehr, als ich nehme</button>
       </div>
-      <div class="qz-nav">
+      <div class="qz-nav no-next">
         <button class="qz-back" data-to="0">← Zurück</button>
-        <button class="btn qz-next" id="qzNext1" disabled>Weiter</button>
       </div>
     </div>
 
@@ -352,9 +370,8 @@
         <button class="qz-card" data-q="2" data-v="orientierung">Orientierung</button>
         <button class="qz-card" data-q="2" data-v="verstehen">Mich endlich verstehen</button>
       </div>
-      <div class="qz-nav">
+      <div class="qz-nav no-next">
         <button class="qz-back" data-to="1">← Zurück</button>
-        <button class="btn qz-next" id="qzNext2" disabled>Weiter</button>
       </div>
     </div>
 
@@ -389,8 +406,10 @@
       <p class="qz-result-body" id="qzResultBody"></p>
       <hr class="qz-divider">
       <dl class="qz-summary" id="qzSummary"></dl>
-      <p style="color:var(--text-soft);font-size:0.95rem;line-height:1.65;margin-bottom:28px;">Möchtest du mehr als die Oberfläche? Dein vollständiges Profil zeigt dir, wer du wirklich bist – Sonne, Mond und Aszendent.</p>
-      <div class="qz-cta-wrap">
+      <div class="qz-offer-card">
+        <div class="qz-offer-eyebrow">Das war erst eine von drei Kräften</div>
+        <h3 class="qz-offer-headline" id="qzOfferHeadline">Was dich von jedem anderen [Zeichen] unterscheidet, liegt tiefer.</h3>
+        <p class="qz-offer-text" id="qzOfferText">Dein Sonnenzeichen teilst du mit Millionen. Dein Mond und dein Aszendent nicht — diese zwei Kräfte sind einzigartig für deinen genauen Geburtsmoment und erklären, warum du dich nie ganz wie ein typischer [Zeichen] fühlst. Dafür brauchen wir nur deine Geburtszeit und deinen Geburtsort.</p>
         <a class="btn" id="qzBuyBtn" href="https://buy.stripe.com/aFa4gB3AAe9D7OW7ZMeZ200" target="_blank" rel="noopener">Jetzt vollständiges Profil erstellen – 19 €</a>
       </div>
     </div>
@@ -503,22 +522,15 @@ function signFor(month, day){
     if(e.key==='Escape' && overlay.classList.contains('open')) closeQuiz();
   });
 
-  // Kartenauswahl
+  // Kartenauswahl + Auto-Advance
   document.querySelectorAll('.qz-card').forEach(card=>{
     card.addEventListener('click', ()=>{
       const q = parseInt(card.dataset.q);
       state.answers[q] = card.dataset.v;
-      document.querySelectorAll(`.qz-card[data-q="${q}"]`).forEach(c=>c.classList.remove('sel'));
-      card.classList.add('sel');
-      const btn = document.getElementById(`qzNext${q}`);
-      if(btn) btn.disabled = false;
+      document.querySelectorAll(`.qz-card[data-q="${q}"]`).forEach(c=>c.classList.remove('sel','flash'));
+      card.classList.add('sel','flash');
+      setTimeout(()=>showStep(q+1), 320);
     });
-  });
-
-  // Weiter-Buttons Q1–Q3
-  [0,1,2].forEach(i=>{
-    const btn = document.getElementById(`qzNext${i}`);
-    if(btn) btn.addEventListener('click', ()=>showStep(i+1));
   });
 
   // Zurück-Buttons
@@ -557,6 +569,11 @@ function signFor(month, day){
       state.answers.map((v,i)=>
         `<dt>${questions[i]}</dt><dd>${ANSWER_LABELS[v]||v}</dd>`
       ).join('');
+
+    document.getElementById('qzOfferHeadline').textContent =
+      `Was dich von jedem anderen ${s.name} unterscheidet, liegt tiefer.`;
+    document.getElementById('qzOfferText').textContent =
+      `Dein Sonnenzeichen teilst du mit Millionen. Dein Mond und dein Aszendent nicht — diese zwei Kräfte sind einzigartig für deinen genauen Geburtsmoment und erklären, warum du dich nie ganz wie ein typischer ${s.name} fühlst. Dafür brauchen wir nur deine Geburtszeit und deinen Geburtsort.`;
 
     /* State für spätere Brevo-Anbindung vollständig verfügbar:
        state.email, state.bday, state.sign.name, state.answers, state.z */
