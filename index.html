@@ -191,8 +191,8 @@
   <section class="hero">
     <div class="wrap">
       <div class="eyebrow">sternenklar <span class="dot">✦</span> dein kosmisches Profil</div>
-      <h1>Dein Sternzeichen kennst du.<br>Aber kennst du dein <em>wahres Profil?</em></h1>
-      <p class="sub">Gib dein Geburtsdatum ein und erhalte sofort deine kostenlose Mini-Analyse — in Sekunden, direkt hier.</p>
+      <h1 id="heroHeadline">Du passt nie ganz in dein Sternzeichen? Das hat einen Grund.</h1>
+      <p class="sub" id="heroSub">Dein Sternzeichen ist nur eine von drei Kräften, die dich formen – die anderen beiden erklären, warum du aus der Schublade fällst.</p>
 
       <form class="form-card" id="hookForm" novalidate>
         <div class="field">
@@ -325,6 +325,32 @@ form.addEventListener('submit', (e)=>{
        body: JSON.stringify({email, bday, sign: s.name})});
      (Double-Opt-In im Mailer aktivieren.) */
 });
+
+/* ---------- Zeichen-spezifischer Einstieg via ?z= ---------- */
+const HERO_VARIANTS = {
+  skorpion: {
+    h: "Skorpion – nach außen hast du alles im Griff. Innen läuft ein Film, den niemand sieht.",
+    s: "Das ist typisch Skorpion. Aber dein Sternzeichen ist nur eine von drei Kräften in dir – die anderen beiden erklären, warum du dich nicht immer wie ein typischer Skorpion verhältst."
+  },
+  krebs: {
+    h: "Krebs – du fängst alle auf. Aber innen trägst du länger an Dingen, als du je zugibst.",
+    s: "Das ist typisch Krebs. Aber dein Sternzeichen ist nur eine von drei Kräften in dir – die anderen beiden erklären, warum du tickst, wie du tickst."
+  },
+  zwilling: {
+    h: "Zwilling – alle halten dich für unkompliziert. Dabei läuft in dir ein Kopf, der nie abschaltet.",
+    s: "Das ist typisch Zwilling. Aber dein Sternzeichen ist nur eine von drei Kräften in dir – die anderen beiden erklären den Rest."
+  }
+  /* Weitere Zeichen: loewe, schuetze, steinbock, … einfach als neuen Eintrag ergänzen */
+};
+
+(function(){
+  const z = new URLSearchParams(location.search).get('z');
+  if (!z) return;
+  const v = HERO_VARIANTS[z.toLowerCase().trim()];
+  if (!v) return;
+  document.getElementById('heroHeadline').textContent = v.h;
+  document.getElementById('heroSub').textContent = v.s;
+})();
 
 /* ---------- Sternenhimmel ---------- */
 (function(){
