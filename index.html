@@ -555,6 +555,18 @@ function signFor(month, day){
     state.sign  = signFor(d.getMonth()+1, d.getDate());
     buildResult();
     showStep(4);
+
+    // Lead-Erfassung im Hintergrund — blockiert Ergebnis nicht
+    fetch('/api/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        source: 'quiz',
+        sunSign:   state.sign.name,
+        entrySign: state.z || undefined,
+      }),
+    }).catch(err => console.error('lead capture failed:', err));
   });
 
   function buildResult(){
