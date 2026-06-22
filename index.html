@@ -288,6 +288,17 @@
     color:var(--text-soft);font-size:0.96rem;line-height:1.7;margin-bottom:24px;
   }
   .qz-offer-card .btn{display:block;text-align:center;text-decoration:none;}
+  .qz-waitlist{
+    margin-top:28px;padding:22px 24px;
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:14px;
+  }
+  .qz-waitlist-eyebrow{
+    font-size:11px;letter-spacing:0.2em;text-transform:uppercase;
+    color:var(--gold);font-weight:600;margin-bottom:10px;
+  }
+  .qz-waitlist-text{color:var(--text-soft);font-size:0.9rem;line-height:1.65;margin-bottom:18px;}
+  .qz-waitlist .waitlist-form .btn{font-size:14px;padding:11px 18px;}
 </style>
 </head>
 <body>
@@ -442,6 +453,16 @@
         <h3 class="qz-offer-headline" id="qzOfferHeadline">Was dich von jedem anderen [Zeichen] unterscheidet, liegt tiefer.</h3>
         <p class="qz-offer-text" id="qzOfferText">Dein Sonnenzeichen teilst du mit Millionen. Dein Mond und dein Aszendent nicht — diese zwei Kräfte sind einzigartig für deinen genauen Geburtsmoment und erklären, warum du dich nie ganz wie ein typischer [Zeichen] fühlst. Dafür brauchen wir nur deine Geburtszeit und deinen Geburtsort.</p>
         <a class="btn" id="qzBuyBtn" href="https://buy.stripe.com/aFa4gB3AAe9D7OW7ZMeZ200" target="_blank" rel="noopener">Jetzt vollständiges Profil erstellen – 19 €</a>
+      </div>
+
+      <div class="qz-waitlist">
+        <div class="qz-waitlist-eyebrow">Bald als gedrucktes Buch</div>
+        <p class="qz-waitlist-text">Dein vollständiges Profil bald auch zum Anfassen – als gestaltetes, gedrucktes Buch. Trag dich ein und erfahre als Erste, sobald es soweit ist.</p>
+        <form class="waitlist-form" id="qzWaitlistForm" novalidate>
+          <input type="email" id="qzWaitlistEmail" placeholder="du@beispiel.de" autocomplete="email">
+          <button class="btn" type="submit">Auf die Warteliste</button>
+        </form>
+        <p class="waitlist-msg" id="qzWaitlistMsg"></p>
       </div>
     </div>
 
@@ -623,23 +644,20 @@ function signFor(month, day){
   }
 })();
 
-/* ---------- Warteliste ---------- */
-(function(){
-  const form = document.getElementById('waitlistForm');
-  const msg  = document.getElementById('waitlistMsg');
+/* ---------- Warteliste (generisch) ---------- */
+function initWaitlist(formId, emailId, msgId) {
+  const form = document.getElementById(formId);
+  const msg  = document.getElementById(msgId);
+  if (!form) return;
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = document.getElementById('waitlistEmail').value.trim();
+    const email = document.getElementById(emailId).value.trim();
     if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-      showMsg('Bitte eine gültige E-Mail-Adresse eingeben.', false);
-      return;
+      showMsg('Bitte eine gültige E-Mail-Adresse eingeben.', false); return;
     }
-
     const btn = form.querySelector('button');
-    btn.disabled = true;
-    btn.textContent = '…';
-
+    btn.disabled = true; btn.textContent = '…';
     try {
       const res = await fetch('/api/lead', {
         method: 'POST',
@@ -649,12 +667,9 @@ function signFor(month, day){
       if (res.ok) {
         form.innerHTML = '';
         showMsg('Du bist dabei – wir melden uns, sobald das Buch da ist.', true);
-      } else {
-        throw new Error('server_error');
-      }
+      } else { throw new Error(); }
     } catch {
-      btn.disabled = false;
-      btn.textContent = 'Auf die Warteliste';
+      btn.disabled = false; btn.textContent = 'Auf die Warteliste';
       showMsg('Etwas hat nicht geklappt – bitte versuche es gleich nochmal.', false);
     }
   });
@@ -664,6 +679,11 @@ function signFor(month, day){
     msg.className = 'waitlist-msg ' + (ok ? 'ok' : 'err');
     msg.style.display = 'block';
   }
+}
+
+(function(){
+  initWaitlist('waitlistForm',   'waitlistEmail',   'waitlistMsg');
+  initWaitlist('qzWaitlistForm', 'qzWaitlistEmail', 'qzWaitlistMsg');
 })();
 
 /* ---------- Zeichen-spezifischer Einstieg via ?z= ---------- */
