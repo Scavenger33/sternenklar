@@ -168,6 +168,24 @@
   .offer .btn{max-width:440px;}
   .reassure{color:var(--text-soft);font-size:0.86rem;margin-top:16px;max-width:440px;}
 
+  /* Warteliste */
+  .waitlist{padding:80px 0 72px;border-top:1px solid rgba(255,255,255,0.07);}
+  .waitlist .eyebrow{margin-bottom:16px;}
+  .waitlist h2{font-family:var(--display);font-weight:400;font-size:clamp(1.5rem,4vw,2rem);color:var(--star);line-height:1.18;margin-bottom:14px;}
+  .waitlist p{color:var(--text-soft);font-size:0.97rem;line-height:1.7;max-width:30em;margin-bottom:28px;}
+  .waitlist-form{display:flex;gap:10px;max-width:440px;flex-wrap:wrap;}
+  .waitlist-form input[type="email"]{
+    flex:1;min-width:0;font-family:var(--body);font-size:16px;color:var(--text);
+    background:rgba(8,10,28,0.5);border:1px solid rgba(255,255,255,0.12);
+    border-radius:11px;padding:13px 14px;transition:border-color .2s;
+  }
+  .waitlist-form input::placeholder{color:#6f7290;}
+  .waitlist-form input:focus{outline:none;border-color:var(--gold);}
+  .waitlist-form .btn{width:auto;flex-shrink:0;padding:13px 22px;font-size:15px;}
+  .waitlist-msg{margin-top:14px;font-size:0.9rem;display:none;}
+  .waitlist-msg.ok{color:var(--gold-soft);}
+  .waitlist-msg.err{color:#f0a3a3;}
+
   /* Footer */
   footer{padding:48px 0 64px;border-top:1px solid rgba(255,255,255,0.07);}
   footer .wrap{display:flex;flex-direction:column;gap:18px;}
@@ -307,6 +325,19 @@
       <!-- TODO: href durch deinen Stripe Payment Link ersetzen -->
       <a class="btn" href="https://buy.stripe.com/aFa4gB3AAe9D7OW7ZMeZ200" id="buyBtn" target="_blank" rel="noopener">Jetzt mein vollständiges Profil erstellen</a>
       <p class="reassure">Im nächsten Schritt gibst du Geburtszeit, Geburtsort und deinen Namen ein.</p>
+    </div>
+  </section>
+
+  <section class="waitlist">
+    <div class="wrap">
+      <div class="eyebrow">Bald als gedrucktes Buch</div>
+      <h2>Dein vollständiges Profil bald auch zum Anfassen.</h2>
+      <p>Als gestaltetes, gedrucktes Buch. Trag dich ein und erfahre als Erste, sobald es soweit ist.</p>
+      <form class="waitlist-form" id="waitlistForm" novalidate>
+        <input type="email" id="waitlistEmail" placeholder="du@beispiel.de" autocomplete="email">
+        <button class="btn" type="submit">Auf die Warteliste</button>
+      </form>
+      <p class="waitlist-msg" id="waitlistMsg"></p>
     </div>
   </section>
 
@@ -589,6 +620,49 @@ function signFor(month, day){
 
     /* State für spätere Brevo-Anbindung vollständig verfügbar:
        state.email, state.bday, state.sign.name, state.answers, state.z */
+  }
+})();
+
+/* ---------- Warteliste ---------- */
+(function(){
+  const form = document.getElementById('waitlistForm');
+  const msg  = document.getElementById('waitlistMsg');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('waitlistEmail').value.trim();
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      showMsg('Bitte eine gültige E-Mail-Adresse eingeben.', false);
+      return;
+    }
+
+    const btn = form.querySelector('button');
+    btn.disabled = true;
+    btn.textContent = '…';
+
+    try {
+      const res = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'waitlist' }),
+      });
+      if (res.ok) {
+        form.innerHTML = '';
+        showMsg('Du bist dabei – wir melden uns, sobald das Buch da ist.', true);
+      } else {
+        throw new Error('server_error');
+      }
+    } catch {
+      btn.disabled = false;
+      btn.textContent = 'Auf die Warteliste';
+      showMsg('Etwas hat nicht geklappt – bitte versuche es gleich nochmal.', false);
+    }
+  });
+
+  function showMsg(text, ok) {
+    msg.textContent = text;
+    msg.className = 'waitlist-msg ' + (ok ? 'ok' : 'err');
+    msg.style.display = 'block';
   }
 })();
 
