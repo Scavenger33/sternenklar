@@ -15,7 +15,7 @@ export async function onRequestPost(context) {
     });
   }
 
-  const { email, source, sunSign, entrySign } = body;
+  const { email, source } = body;
 
   if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     return new Response(JSON.stringify({ ok: false, error: 'invalid_email' }), {
@@ -23,8 +23,11 @@ export async function onRequestPost(context) {
     });
   }
 
-  const apiKey  = env.BREVO_API_KEY;
-  const listId  = parseInt(env.BREVO_LIST_ID, 10);
+  const apiKey = env.BREVO_API_KEY;
+  const listIdRaw = source === 'waitlist'
+    ? env.BREVO_LIST_ID_WAITLIST
+    : env.BREVO_LIST_ID;
+  const listId = parseInt(listIdRaw, 10);
 
   if (!apiKey || !listId) {
     return new Response(JSON.stringify({ ok: false, error: 'missing_env' }), {
@@ -32,16 +35,10 @@ export async function onRequestPost(context) {
     });
   }
 
-  const attributes = {};
-  if (source)    attributes.SOURCE    = source;
-  if (sunSign)   attributes.SUNSIGN   = sunSign;
-  if (entrySign) attributes.ENTRYSIGN = entrySign;
-
   const brevoBody = {
     email,
     listIds: [listId],
     updateEnabled: true,
-    ...(Object.keys(attributes).length > 0 && { attributes }),
   };
 
   let brevoRes;
