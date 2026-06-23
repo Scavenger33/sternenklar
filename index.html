@@ -126,6 +126,7 @@
     border:none;border-radius:11px;padding:15px 20px;cursor:pointer;
     transition:transform .15s ease, box-shadow .2s ease;
     box-shadow:0 8px 30px rgba(230,192,105,0.22);
+    white-space:normal;word-break:break-word;
   }
   .btn:hover{transform:translateY(-1px);box-shadow:0 12px 38px rgba(230,192,105,0.32);}
   .btn:focus-visible{outline:2px solid var(--star);outline-offset:3px;}
@@ -182,6 +183,10 @@
   .waitlist-form input::placeholder{color:#6f7290;}
   .waitlist-form input:focus{outline:none;border-color:var(--gold);}
   .waitlist-form .btn{width:auto;flex-shrink:0;padding:13px 22px;font-size:15px;}
+  @media (max-width:520px){
+    .waitlist-form{flex-direction:column;}
+    .waitlist-form input[type="email"],.waitlist-form .btn{width:100%;flex:none;}
+  }
   .waitlist-msg{margin-top:14px;font-size:0.9rem;display:none;}
   .waitlist-msg.ok{color:var(--gold-soft);}
   .waitlist-msg.err{color:#f0a3a3;}
@@ -462,7 +467,7 @@
       <p class="qz-lede">Gib dein Geburtsdatum ein – wir berechnen sofort dein Sternzeichen. Deine persönliche Analyse kommt direkt per E-Mail.</p>
       <div class="field">
         <label for="qzBday">Dein Geburtsdatum</label>
-        <input type="date" id="qzBday" name="qzBday">
+        <input type="text" id="qzBday" name="qzBday" inputmode="numeric" placeholder="TT.MM.JJJJ" maxlength="10" autocomplete="bday">
       </div>
       <div class="field">
         <label for="qzEmail">Deine E-Mail-Adresse</label>
@@ -624,6 +629,22 @@ function signFor(month, day){
     });
   });
 
+  // Geburtsdatum-Masking: TT.MM.JJJJ
+  document.getElementById('qzBday').addEventListener('input', function(){
+    let v = this.value.replace(/\D/g,'');
+    if(v.length > 2) v = v.slice(0,2) + '.' + v.slice(2);
+    if(v.length > 5) v = v.slice(0,5) + '.' + v.slice(5);
+    this.value = v.slice(0,10);
+  });
+
+  function parseBday(s){
+    const m = s.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+    if(!m) return null;
+    const d = new Date(+m[3], +m[2]-1, +m[1]);
+    if(isNaN(d.getTime()) || d.getDate()!==+m[1] || d.getMonth()!==+m[2]-1) return null;
+    return d;
+  }
+
   // Zurück-Buttons
   document.querySelectorAll('.qz-back').forEach(btn=>{
     btn.addEventListener('click', ()=>showStep(parseInt(btn.dataset.to)));
@@ -631,19 +652,19 @@ function signFor(month, day){
 
   // Absenden (Daten-Schritt)
   document.getElementById('qzSubmit').addEventListener('click', ()=>{
-    const bday    = document.getElementById('qzBday').value;
+    const bdayRaw = document.getElementById('qzBday').value.trim();
     const email   = document.getElementById('qzEmail').value.trim();
     const consent = document.getElementById('qzConsent').checked;
     const err     = document.getElementById('qzError');
+    const parsedDate = parseBday(bdayRaw);
 
-    if(!bday || !email || !consent || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
+    if(!parsedDate || !email || !consent || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
       err.style.display='block'; return;
     }
     err.style.display='none';
-    state.bday  = bday;
+    state.bday  = bdayRaw;
     state.email = email;
-    const d = new Date(bday);
-    state.sign  = signFor(d.getMonth()+1, d.getDate());
+    state.sign  = signFor(parsedDate.getMonth()+1, parsedDate.getDate());
     buildResult();
     showStep(4);
     trackLead();
