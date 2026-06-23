@@ -749,6 +749,12 @@ function signFor(month, day){
         `<dt>${questions[i]}</dt><dd>${ANSWER_LABELS[v]||v}</dd>`
       ).join('');
 
+    const buyBtn = document.getElementById('qzBuyBtn');
+    if(buyBtn && state.email){
+      const base = 'https://buy.stripe.com/aFa4gB3AAe9D7OW7ZMeZ200';
+      buyBtn.href = base + '?prefilled_email=' + encodeURIComponent(state.email);
+    }
+
     document.getElementById('qzOfferHeadline').textContent =
       `Was dich von jedem anderen ${s.name} unterscheidet, liegt tiefer.`;
     document.getElementById('qzOfferText').textContent =
