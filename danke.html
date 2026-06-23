@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Dein Sternenprofil ist auf dem Weg — sternenklar</title>
+<style>
+  @font-face {
+    font-family: 'Fraunces';
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url('fonts/fraunces-normal-latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Fraunces';
+    font-style: italic;
+    font-weight: 500;
+    font-display: swap;
+    src: url('fonts/fraunces-italic-500-latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url('fonts/inter-latin.woff2') format('woff2');
+  }
+  :root{
+    --bg-deep:#080a1c;
+    --bg-mid:#11143a;
+    --bg-glow:#1d2150;
+    --star:#f3efe2;
+    --text:#ece8da;
+    --text-soft:#b6b8cf;
+    --gold:#e6c069;
+    --gold-soft:#f0d79b;
+    --line:rgba(230,192,105,0.22);
+    --display:"Fraunces", Georgia, serif;
+    --body:"Inter", system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:var(--body);
+    color:var(--text);
+    background:var(--bg-deep);
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    line-height:1.6;
+  }
+  /* Sternenhimmel */
+  #sky{
+    position:fixed;inset:0;z-index:0;display:block;
+    background:radial-gradient(120% 90% at 50% -10%, var(--bg-glow) 0%, var(--bg-mid) 38%, var(--bg-deep) 78%);
+  }
+  .veil{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(80% 60% at 50% 40%, transparent 0%, rgba(8,10,28,0.35) 100%);
+  }
+  .wrap{
+    position:relative;z-index:2;
+    max-width:560px;
+    padding:64px 24px 80px;
+    text-align:center;
+  }
+  .glyph{
+    font-family:var(--display);
+    font-size:56px;
+    color:var(--gold);
+    line-height:1;
+    margin-bottom:28px;
+  }
+  h1{
+    font-family:var(--display);
+    font-weight:400;
+    font-size:clamp(1.9rem,6vw,2.8rem);
+    color:var(--star);
+    line-height:1.1;
+    letter-spacing:-0.01em;
+    margin-bottom:22px;
+  }
+  p{
+    color:var(--text-soft);
+    font-size:clamp(1rem,2.5vw,1.12rem);
+    line-height:1.75;
+    max-width:34em;
+    margin:0 auto 36px;
+  }
+  .back{
+    display:inline-block;
+    color:var(--text-soft);
+    font-size:0.88rem;
+    text-decoration:none;
+    letter-spacing:0.01em;
+    border-bottom:1px solid rgba(255,255,255,0.15);
+    padding-bottom:2px;
+    transition:color .15s,border-color .15s;
+  }
+  .back:hover{color:var(--gold-soft);border-color:var(--gold-soft);}
+  footer{
+    position:relative;z-index:2;
+    width:100%;text-align:center;
+    padding:24px;
+    border-top:1px solid rgba(255,255,255,0.06);
+  }
+  .foot-links{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;}
+  .foot-links a{color:var(--text-soft);font-size:0.84rem;text-decoration:none;}
+  .foot-links a:hover{color:var(--gold-soft);}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="veil"></div>
+
+<main class="wrap">
+  <div class="glyph">✦</div>
+  <h1>Dein Sternenprofil<br>ist auf dem Weg.</h1>
+  <p>Wir erstellen jetzt dein persönliches Profil – auf Basis deines genauen Geburtsmoments. Du erhältst es in Kürze per E-Mail, gestaltet und direkt zum Lesen.</p>
+  <a href="/" class="back">Zurück zur Startseite</a>
+</main>
+
+<footer>
+  <div class="foot-links">
+    <a href="/impressum">Impressum</a>
+    <a href="/datenschutz">Datenschutz</a>
+    <a href="/widerruf">Widerruf</a>
+  </div>
+</footer>
+
+<script>
+/* ---------- Sternenhimmel ---------- */
+(function(){
+  const canvas=document.getElementById('sky');
+  const ctx=canvas.getContext('2d');
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w,h,dpr,stars=[],t=0;
+  function resize(){
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    w=canvas.clientWidth=window.innerWidth;
+    h=canvas.clientHeight=window.innerHeight;
+    canvas.width=w*dpr;canvas.height=h*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    build();
+  }
+  function build(){
+    const count=Math.round(Math.min(w*h/4200,320));
+    stars=[];
+    for(let i=0;i<count;i++){
+      const depth=Math.random();
+      stars.push({
+        x:Math.random()*w,y:Math.random()*h,
+        r:0.4+depth*1.7,depth:0.25+depth*1.0,
+        base:0.25+Math.random()*0.6,
+        tw:Math.random()*Math.PI*2,sp:0.6+Math.random()*1.4,
+        gold:Math.random()<0.12
+      });
+    }
+  }
+  function frame(){
+    t+=0.016;
+    ctx.clearRect(0,0,w,h);
+    for(const s of stars){
+      const a=reduce?s.base:s.base*(0.55+0.45*Math.sin(t*s.sp+s.tw));
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=s.gold?'rgba(240,215,155,'+a+')':'rgba(243,239,226,'+a+')';
+      ctx.fill();
+      if(s.r>1.4){
+        ctx.beginPath();ctx.arc(s.x,s.y,s.r*3.2,0,Math.PI*2);
+        ctx.fillStyle=s.gold?'rgba(230,192,105,'+(a*0.10)+')':'rgba(154,160,214,'+(a*0.08)+')';
+        ctx.fill();
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  window.addEventListener('resize',resize);
+  resize();requestAnimationFrame(frame);
+})();
+
+/* ---------- Meta-Pixel Purchase (nur mit Consent) ---------- */
+(function(){
+  const CONSENT_KEY = 'sk_consent';
+  const PIXEL_ID    = 'META_PIXEL_ID'; // gleiche Pixel-ID wie in index.html eintragen
+
+  if(localStorage.getItem(CONSENT_KEY) !== 'granted') return;
+  if(!PIXEL_ID || PIXEL_ID === 'META_PIXEL_ID') return;
+
+  !function(f,b,e,v,n,t,s){
+    if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window,document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+
+  fbq('init', PIXEL_ID);
+  fbq('track', 'PageView');
+  fbq('track', 'Purchase', { currency: 'EUR', value: 19.00 });
+})();
+</script>
+</body>
+</html>
