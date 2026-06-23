@@ -729,9 +729,12 @@ function signFor(month, day){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email,
-        source: 'quiz',
-        sunSign:   state.sign.name,
-        entrySign: state.z || undefined,
+        source:     'quiz',
+        fokus:      ANSWER_LABELS[state.answers[0]] || state.answers[0] || undefined,
+        selbstbild: ANSWER_LABELS[state.answers[1]] || state.answers[1] || undefined,
+        beduerfnis: ANSWER_LABELS[state.answers[2]] || state.answers[2] || undefined,
+        sunSign:    state.sign ? state.sign.name : undefined,
+        entrySign:  state.z || undefined,
       }),
     }).catch(err => console.error('lead capture failed:', err));
   });

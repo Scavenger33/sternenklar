@@ -15,7 +15,7 @@ export async function onRequestPost(context) {
     });
   }
 
-  const { email, source } = body;
+  const { email, source, fokus, selbstbild, beduerfnis, sunSign, entrySign } = body;
 
   if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     return new Response(JSON.stringify({ ok: false, error: 'invalid_email' }), {
@@ -40,6 +40,16 @@ export async function onRequestPost(context) {
     listIds: [listId],
     updateEnabled: true,
   };
+
+  if (source === 'quiz') {
+    const attrs = {};
+    if (fokus)      attrs.FOKUS       = fokus;
+    if (selbstbild) attrs.SELBSTBILD  = selbstbild;
+    if (beduerfnis) attrs.BEDUERFNIS  = beduerfnis;
+    if (sunSign)    attrs.SUNSIGN     = sunSign;
+    if (entrySign)  attrs.ENTRYSIGN   = entrySign;
+    if (Object.keys(attrs).length) brevoBody.attributes = attrs;
+  }
 
   let brevoRes;
   try {
