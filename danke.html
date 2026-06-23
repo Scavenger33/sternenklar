@@ -183,10 +183,9 @@
 /* ---------- Meta-Pixel Purchase (nur mit Consent) ---------- */
 (function(){
   const CONSENT_KEY = 'sk_consent';
-  const PIXEL_ID    = 'META_PIXEL_ID'; // gleiche Pixel-ID wie in index.html eintragen
+  const PIXEL_ID    = '27231517206458861';
 
   if(localStorage.getItem(CONSENT_KEY) !== 'granted') return;
-  if(!PIXEL_ID || PIXEL_ID === 'META_PIXEL_ID') return;
 
   !function(f,b,e,v,n,t,s){
     if(f.fbq)return;n=f.fbq=function(){n.callMethod?
