@@ -837,9 +837,8 @@ const HERO_VARIANTS = {
 const CONSENT_KEY = 'sk_consent';
 
 function loadPixel() {
-  const id = 'META_PIXEL_ID'; // Cloudflare Pages kann kein JS-Env zur Laufzeit injizieren —
-                               // ersetze diesen String durch deine echte Pixel-ID
-  if (window._pixelLoaded || !id || id === 'META_PIXEL_ID') return;
+  const id = '27231517206458861';
+  if (window._pixelLoaded) return;
   window._pixelLoaded = true;
   !function(f,b,e,v,n,t,s){
     if(f.fbq)return;n=f.fbq=function(){n.callMethod?
