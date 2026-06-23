@@ -239,6 +239,26 @@
   }
   .cb-decline:hover{border-color:rgba(255,255,255,0.4);color:var(--star);}
 
+  /* ── Quiz Scroll-Indikator (nur Mobile) ─────────── */
+  #qzScrollHint{
+    position:fixed;bottom:28px;left:50%;
+    transform:translateX(-50%);
+    z-index:201;pointer-events:none;
+    display:flex;flex-direction:column;align-items:center;gap:5px;
+    opacity:0;transition:opacity .4s ease;
+  }
+  #qzScrollHint.visible{opacity:1;}
+  .qzsh-label{
+    font-size:11px;letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--gold);font-weight:600;
+  }
+  .qzsh-arrow{
+    color:var(--gold);font-size:22px;line-height:1;
+    animation:qzshBounce 1.5s ease-in-out infinite;
+  }
+  @keyframes qzshBounce{0%,100%{transform:translateY(0);}55%{transform:translateY(6px);}}
+  @media(min-width:768px){#qzScrollHint{display:none;}}
+
   /* ── Quiz Overlay ─────────────────────────────── */
   #quiz{
     position:fixed;inset:0;z-index:200;
@@ -404,6 +424,11 @@
   </footer>
 </main>
 
+<div id="qzScrollHint" aria-hidden="true">
+  <span class="qzsh-label">weiterlesen</span>
+  <span class="qzsh-arrow">↓</span>
+</div>
+
 <!-- ── Consent-Banner ────────────────────────────────────────── -->
 <div id="consent-banner" class="hidden" aria-live="polite">
   <p class="cb-text">Wir nutzen Cookies und den Meta-Pixel für Marketing. <a href="/datenschutz" target="_blank">Datenschutzerklärung</a></p>
@@ -568,6 +593,29 @@ function signFor(month, day){
     orientierung:'Orientierung', verstehen:'Mich endlich verstehen'
   };
 
+  const scrollHint = document.getElementById('qzScrollHint');
+  let scrollHintBound = false;
+
+  function hideScrollHint(){
+    scrollHint.classList.remove('visible');
+    if(scrollHintBound){
+      overlay.removeEventListener('scroll', hideScrollHint);
+      scrollHintBound = false;
+    }
+  }
+
+  function maybeShowScrollHint(){
+    if(window.innerWidth >= 768) return;
+    // Nur zeigen wenn Seite tatsächlich scrollbar ist
+    setTimeout(()=>{
+      if(overlay.scrollHeight > overlay.clientHeight + 40){
+        scrollHint.classList.add('visible');
+        overlay.addEventListener('scroll', hideScrollHint, { once: true });
+        scrollHintBound = true;
+      }
+    }, 350);
+  }
+
   function openQuiz(){
     overlay.classList.add('open');
     document.body.style.overflow='hidden';
@@ -576,6 +624,7 @@ function signFor(month, day){
   function closeQuiz(){
     overlay.classList.remove('open');
     document.body.style.overflow='';
+    hideScrollHint();
   }
 
   function showStep(n){
@@ -671,6 +720,7 @@ function signFor(month, day){
     state.sign  = signFor(parsedDate.getMonth()+1, parsedDate.getDate());
     buildResult();
     showStep(4);
+    maybeShowScrollHint();
     trackLead();
 
     // Lead-Erfassung im Hintergrund — blockiert Ergebnis nicht
