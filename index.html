@@ -1,4 +1,4 @@
-<!-- deploy -->
+﻿<!-- deploy -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -326,6 +326,11 @@
   }
   .qz-result-body{color:var(--text-soft);font-size:0.98rem;line-height:1.7;margin-bottom:28px;}
   .qz-divider{border:none;border-top:1px solid var(--line);margin:32px 0;}
+  /* Fortschrittsbalken */
+  .qz-progress{margin:0 0 28px;}
+  .qz-progress-label{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:8px;}
+  .qz-progress-track{height:6px;background:rgba(255,255,255,0.10);border-radius:99px;overflow:hidden;}
+  .qz-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-soft));border-radius:99px;transition:width .6s ease;}
   .qz-summary{margin-bottom:32px;}
   .qz-summary dt{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:3px;}
   .qz-summary dd{color:var(--text-soft);font-size:0.9rem;margin-bottom:14px;margin-left:0;}
@@ -521,11 +526,16 @@
       <p class="qz-result-body" id="qzResultBody"></p>
       <hr class="qz-divider">
       <dl class="qz-summary" id="qzSummary"></dl>
+      <div class="qz-progress" id="qzProgress">
+        <div class="qz-progress-label">Dein Profil: <span id="qzProgressPct">30 %</span></div>
+        <div class="qz-progress-track"><div class="qz-progress-fill" id="qzProgressFill" style="width:30%"></div></div>
+      </div>
+
       <div class="qz-offer-card">
-        <div class="qz-offer-eyebrow">Das war erst eine von drei Kräften</div>
-        <h3 class="qz-offer-headline" id="qzOfferHeadline">Was dich von jedem anderen [Zeichen] unterscheidet, liegt tiefer.</h3>
-        <p class="qz-offer-text" id="qzOfferText">Dein Sonnenzeichen teilst du mit Millionen. Dein Mond und dein Aszendent nicht — diese zwei Kräfte sind einzigartig für deinen genauen Geburtsmoment und erklären, warum du dich nie ganz wie ein typischer [Zeichen] fühlst. Dafür brauchen wir nur deine Geburtszeit und deinen Geburtsort.</p>
-        <a class="btn" id="qzBuyBtn" href="https://buy.stripe.com/aFa4gB3AAe9D7OW7ZMeZ200" target="_blank" rel="noopener">Jetzt vollständiges Profil erstellen – 19 €</a>
+        <div class="qz-offer-eyebrow">Das war erst die Oberfläche</div>
+        <h3 class="qz-offer-headline" id="qzOfferHeadline">7 Fragen mehr bringen dein Bild auf 70 %.</h3>
+        <p class="qz-offer-text" id="qzOfferText">Dein Sonnenzeichen zeigt, wer du nach außen bist. Doch wie du unter Druck reagierst, was dich wirklich antreibt und was du hinter deiner Fassade trägst — das liegt noch im Verborgenen. 7 gezielte Fragen heben genau das ans Licht.</p>
+        <a class="btn" id="qzBuyBtn" href="https://buy.stripe.com/dRmaEZ1ss9Tnd9ggwieZ201" target="_blank" rel="noopener">Quiz Plus freischalten – 3,99 €</a>
       </div>
 
       <div class="qz-waitlist">
@@ -752,19 +762,21 @@ function signFor(month, day){
         `<dt>${questions[i]}</dt><dd>${ANSWER_LABELS[v]||v}</dd>`
       ).join('');
 
+    // Quiz-Plus-Button: E-Mail vorausfüllen
     const buyBtn = document.getElementById('qzBuyBtn');
     if(buyBtn && state.email){
-      const base = 'https://buy.stripe.com/aFa4gB3AAe9D7OW7ZMeZ200';
+      const base = 'https://buy.stripe.com/dRmaEZ1ss9Tnd9ggwieZ201';
       buyBtn.href = base + '?prefilled_email=' + encodeURIComponent(state.email);
     }
 
-    document.getElementById('qzOfferHeadline').textContent =
-      `Was dich von jedem anderen ${s.name} unterscheidet, liegt tiefer.`;
-    document.getElementById('qzOfferText').textContent =
-      `Dein Sonnenzeichen teilst du mit Millionen. Dein Mond und dein Aszendent nicht — diese zwei Kräfte sind einzigartig für deinen genauen Geburtsmoment und erklären, warum du dich nie ganz wie ein typischer ${s.name} fühlst. Dafür brauchen wir nur deine Geburtszeit und deinen Geburtsort.`;
-
-    /* State für spätere Brevo-Anbindung vollständig verfügbar:
-       state.email, state.bday, state.sign.name, state.answers, state.z */
+    // Gratis-Antworten in sessionStorage legen (für Quiz-Plus-Seite)
+    try {
+      sessionStorage.setItem('sk_quiz_email',      state.email  || '');
+      sessionStorage.setItem('sk_quiz_sunsign',    s.name       || '');
+      sessionStorage.setItem('sk_quiz_fokus',      ANSWER_LABELS[state.answers[0]] || state.answers[0] || '');
+      sessionStorage.setItem('sk_quiz_selbstbild', ANSWER_LABELS[state.answers[1]] || state.answers[1] || '');
+      sessionStorage.setItem('sk_quiz_beduerfnis', ANSWER_LABELS[state.answers[2]] || state.answers[2] || '');
+    } catch(e) { /* sessionStorage nicht verfügbar — kein Blocker */ }
   }
 })();
 
