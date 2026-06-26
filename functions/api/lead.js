@@ -15,7 +15,9 @@ export async function onRequestPost(context) {
     });
   }
 
-  const { email, source, fokus, selbstbild, beduerfnis, sunSign, entrySign } = body;
+  const { email, source, fokus, selbstbild, beduerfnis, sunSign, entrySign,
+          PLUS_DRUCK, PLUS_AUSSEN_INNEN, PLUS_ANKERN,
+          PLUS_VERBORGEN, PLUS_MUSTER, PLUS_KRAFT, PLUS_MASSSTAB } = body;
 
   if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     return new Response(JSON.stringify({ ok: false, error: 'invalid_email' }), {
@@ -48,6 +50,18 @@ export async function onRequestPost(context) {
     if (beduerfnis) attrs.BEDUERFNIS  = beduerfnis;
     if (sunSign)    attrs.SUNSIGN     = sunSign;
     if (entrySign)  attrs.ENTRYSIGN   = entrySign;
+    if (Object.keys(attrs).length) brevoBody.attributes = attrs;
+  }
+
+  if (source === 'quiz-plus') {
+    const attrs = {};
+    if (PLUS_DRUCK)        attrs.PLUS_DRUCK        = PLUS_DRUCK;
+    if (PLUS_AUSSEN_INNEN) attrs.PLUS_AUSSEN_INNEN = PLUS_AUSSEN_INNEN;
+    if (PLUS_ANKERN)       attrs.PLUS_ANKERN       = PLUS_ANKERN;
+    if (PLUS_VERBORGEN)    attrs.PLUS_VERBORGEN    = PLUS_VERBORGEN;
+    if (PLUS_MUSTER)       attrs.PLUS_MUSTER       = PLUS_MUSTER;
+    if (PLUS_KRAFT)        attrs.PLUS_KRAFT        = PLUS_KRAFT;
+    if (PLUS_MASSSTAB)     attrs.PLUS_MASSSTAB     = PLUS_MASSSTAB;
     if (Object.keys(attrs).length) brevoBody.attributes = attrs;
   }
 
