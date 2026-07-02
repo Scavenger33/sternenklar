@@ -172,6 +172,36 @@
   #quizOpen{max-width:440px;}
   #buyBtn{white-space:nowrap;}
   .reassure{color:var(--text-soft);font-size:0.86rem;margin-top:16px;max-width:440px;}
+  /* Testimonial-Card */
+  .testi{
+    background:rgba(20,24,58,0.65);
+    border:1px solid rgba(230,192,105,0.28);
+    border-radius:16px;
+    padding:28px 26px;
+    margin-bottom:28px;
+    max-width:520px;
+  }
+  .testi--compact{padding:20px 20px;margin-bottom:22px;}
+  .testi-stars{
+    font-family:var(--display);
+    color:var(--gold);
+    font-size:15px;
+    letter-spacing:3px;
+    margin-bottom:14px;
+    line-height:1;
+  }
+  .testi-quote{
+    font-family:var(--display);
+    font-style:italic;
+    font-weight:500;
+    font-size:clamp(1.05rem,2.8vw,1.22rem);
+    color:var(--star);
+    line-height:1.55;
+    margin-bottom:16px;
+  }
+  .testi--compact .testi-quote{font-size:clamp(0.97rem,2.5vw,1.08rem);margin-bottom:12px;}
+  .testi-name{font-size:0.84rem;color:var(--text-soft);}
+  .testi-name strong{color:var(--gold-soft);font-weight:600;}
 
   /* Warteliste */
   .waitlist{padding:80px 0 72px;border-top:1px solid rgba(255,255,255,0.07);}
@@ -393,6 +423,12 @@
         <li><span class="mark">✦</span><div><strong>Als gestaltetes Profil</strong><span>Schön aufbereitet, direkt in dein Postfach – zum Behalten.</span></div></li>
       </ul>
 
+      <figure class="testi" aria-label="Kundenstimme">
+        <div class="testi-stars" aria-label="5 von 5 Sternen">★★★★★</div>
+        <blockquote class="testi-quote">„Ich dachte, mich beschreibt einer meiner besten Freunde oder mein Ex-Partner. Kühl und sachlich, aber mit Herz und Tiefe. Ich sehe mich genau so – konnte es aber nie erklären, weil mir immer nur die ‚Jungfrau-Attribute' eingefallen sind."</blockquote>
+        <figcaption class="testi-name"><strong>Vera</strong> aus Esslingen</figcaption>
+      </figure>
+
       <div class="price-row">
         <span class="price">19&nbsp;€</span>
         <span class="price-note">einmalig · sofort nach Erstellung per Mail</span>
@@ -535,6 +571,11 @@
         <div class="qz-offer-eyebrow">Das war erst die Oberfläche</div>
         <h3 class="qz-offer-headline" id="qzOfferHeadline">7 Fragen mehr bringen dein Bild auf 70 %.</h3>
         <p class="qz-offer-text" id="qzOfferText">Dein Sonnenzeichen zeigt, wer du nach außen bist. Doch wie du unter Druck reagierst, was dich wirklich antreibt und was du hinter deiner Fassade trägst — das liegt noch im Verborgenen. 7 gezielte Fragen heben genau das ans Licht.</p>
+        <figure class="testi testi--compact" aria-label="Kundenstimme">
+          <div class="testi-stars" aria-label="5 von 5 Sternen">★★★★★</div>
+          <blockquote class="testi-quote">„Mir sind immer nur die ‚Jungfrau-Attribute' eingefallen – dabei war das nur die halbe Geschichte."</blockquote>
+          <figcaption class="testi-name"><strong>Vera</strong></figcaption>
+        </figure>
         <a class="btn" id="qzBuyBtn" href="https://buy.stripe.com/dRmaEZ1ss9Tnd9ggwieZ201" target="_blank" rel="noopener">Quiz Plus freischalten – 3,99 €</a>
       </div>
 
