@@ -202,6 +202,11 @@
   .testi--compact .testi-quote{font-size:clamp(0.97rem,2.5vw,1.08rem);margin-bottom:12px;}
   .testi-name{font-size:0.84rem;color:var(--text-soft);}
   .testi-name strong{color:var(--gold-soft);font-weight:600;}
+  /* Hero-Variante: kein Card-Hintergrund, rein typografisch */
+  .testi--hero{background:none;border:none;border-radius:0;padding:0;margin:18px 0 0;max-width:440px;}
+  .testi--hero .testi-stars{font-size:13px;letter-spacing:2px;margin-bottom:8px;}
+  .testi--hero .testi-quote{font-size:0.96rem;margin-bottom:6px;}
+  .testi--hero .testi-name{font-size:0.8rem;}
 
   /* Warteliste */
   .waitlist{padding:80px 0 72px;border-top:1px solid rgba(255,255,255,0.07);}
@@ -407,6 +412,12 @@
       <p class="sub" id="heroSub">Dein Sternzeichen ist nur eine von drei Kräften, die dich formen – die anderen beiden erklären, warum du aus der Schublade fällst.</p>
 
       <button class="btn" id="quizOpen">Kostenlose Analyse starten</button>
+
+      <figure class="testi testi--hero" aria-label="Kundenstimme">
+        <div class="testi-stars" aria-label="5 von 5 Sternen">★★★★★</div>
+        <blockquote class="testi-quote">„Ich sehe mich genau so – konnte es aber nie erklären."</blockquote>
+        <figcaption class="testi-name"><strong>Vera</strong> aus Esslingen</figcaption>
+      </figure>
     </div>
   </section>
 
